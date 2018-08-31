@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+<title>Rubik's Cube</title>
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="js/jquery.mousewheel.min.js"></script>
+<script type="text/javascript" src="js/three.min.js"></script>
+<script type="text/javascript" src="js/OrbitControls.js"></script>
+<script type="text/javascript" src="js/cube.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="css/styles.css">
+
+</head>
+<body>
+<div id="container">
+    <div id="display-elements">
+        <div id="camera-input"><button id='reset-camera'><i class="fa fa-refresh" aria-hidden="true"></i></button></div>
+        <div id="cube-canvas"></div>
+        <div id="speed-input"><input type="range" name="speed" id="speed-slider" value="40" min="0" max="49" step="-1" style="width:300px;"></div>
+    </div>
+    
+    <div id="button-input">
+        <div class='keypad-div'>
+            <h2>Numeric Keypad</h2>
+            <table>
+                <tr>
+                    <td><button data-direction='f-upper' class='rotate square'>F</button></td>
+                    <td><button data-direction='fp-upper' class='rotate square'>F'</button></td>
+                    <td><button data-direction='d-upper' class='rotate square'>D</button></td>
+                    <td rowspan=2><button data-direction='dp-upper' class='rotate port text-top'>D'</button></td>
+                </tr>
+                <tr>
+                    <td><button data-direction='l-upper' class='rotate square'>L</button></td>
+                    <td><button data-direction='u-upper' class='rotate square'>U</button></td>
+                    <td><button data-direction='r-upper' class='rotate square'>R</button></td>
+                </tr>
+                <tr>
+                    <td><button data-direction='lp-upper' class='rotate square'>L'</button></td>
+                    <td><button data-direction='up-upper' class='rotate square'>U'</button></td>
+                    <td><button data-direction='rp-upper' class='rotate square'>R'</button></td>
+                    <td rowspan=2><button class='port' disabled></button></td>
+                </tr>
+                <tr>
+                    <td colspan=2><button data-direction='b-upper' class='rotate land text-right'>B</button></td>
+                    <td><button data-direction='bp-upper' class='rotate square'>B'</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class='keypad-div'>
+            <h2>Keypad + Shift</h2>
+            <table>
+                <tr>
+                    <td><button data-direction='f-lower' class='rotate square'>f</button></td>
+                    <td><button data-direction='fp-lower' class='rotate square'>f'</button></td>
+                    <td><button data-direction='d-lower' class='rotate square'>d</button></td>  
+                    <td rowspan=2><button data-direction='dp-lower' class='rotate port text-top'>d'</button></td>
+                </tr>
+                <tr>
+                    <td><button data-direction='l-lower' class='rotate square'>l</button></td>
+                    <td><button data-direction='u-lower' class='rotate square'>u</button></td>
+                    <td><button data-direction='r-lower' class='rotate square'>r</button></td>
+                </tr>
+                <tr>
+                    <td><button data-direction='lp-lower' class='rotate square'>l'</button></td>
+                    <td><button data-direction='up-lower' class='rotate square'>u'</button></td>
+                    <td><button data-direction='rp-lower' class='rotate square'>r'</button></td>
+                    <td rowspan=2><button class='port' disabled></button></td>
+                </tr>
+                <tr>
+                    <td colspan=2><button data-direction='b-lower' class='rotate land text-right'>b</button></td>
+                    <td><button data-direction='bp-lower' class='rotate square'>b'</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class='keypad-div'>
+            <h2>Keypad + Alt</h2>
+            <table>
+                <tr><td><button data-direction='m-upper' class='rotate square'>M</button></td>
+                    <td><button data-direction='e-upper' class='rotate square'>E</button></td>
+                    <td><button data-direction='s-upper' class='rotate square'>S</button></td>
+                    <td rowspan=2><button class='port' disabled></button></td>
+                    </tr>
+                <tr><td><button data-direction='mp-upper' class='rotate square'>M'</button></td>
+                    <td><button data-direction='ep-upper' class='rotate square'>E'</button></td>
+                    <td><button data-direction='sp-upper' class='rotate square'>S'</button></td>
+                </tr>
+                <tr><td><button data-direction='x-upper' class='rotate square'>x</button></td>
+                    <td><button data-direction='y-upper' class='rotate square'>y</button></td>
+                    <td><button data-direction='z-upper' class='rotate square'>z</button></td>
+                    <td rowspan=2><button data-direction='zp-upper' class='rotate port text-bottom'>z'</button></td>
+                </tr>
+                <tr><td colspan=2><button data-direction='xp-upper' class='rotate land text-right'>x'</button></td>
+                    <td><button data-direction='yp-upper' class='rotate square'>y'</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    
+    <div id="algorithm-input">
+        <div id="f2l-algs">
+                <h2>F2L</h2>
+                <h4>Easy cases</h4>
+                <img class="alg-image" data-alg="R U R'" src="algs/f2l-01.png">
+                <img class="alg-image" data-alg="F' U' F" src="algs/f2l-02.png">
+                <img class="alg-image" data-alg="U' F' U F" src="algs/f2l-03.png">
+                <img class="alg-image" data-alg="U R U' R'" src="algs/f2l-04.png">
+                <h4>Corner in bottom, edge in top layer</h4>
+                <img class="alg-image" data-alg="(U R U' R') (U' F' U F)" src="algs/f2l-05.png">
+                <img class="alg-image" data-alg="(U' F' U F) (U R U' R')" src="algs/f2l-06.png">
+                <img class="alg-image" data-alg="(F' U F) (U' F' U F)" src="algs/f2l-07.png">
+                <img class="alg-image" data-alg="(R U R') (U' R U R')" src="algs/f2l-08.png">
+                <img class="alg-image" data-alg="(R U' R') (U R U' R')" src="algs/f2l-09.png">
+                <img class="alg-image" data-alg="(F' U' F) (U F' U' F)" src="algs/f2l-10.png">
+                <h4>Corner in top, edge in middle</h4>
+                <img class="alg-image" data-alg="(R U R' U') (R U R' U') (R U R')" src="algs/f2l-11.png">
+                <img class="alg-image" data-alg="(R U' R') (d R' U R)" src="algs/f2l-12.png">
+                <img class="alg-image" data-alg="(U F' U F) (U F' U2 F)" src="algs/f2l-13.png">
+                <img class="alg-image" data-alg="(U F' U' F) (d' F U F')" src="algs/f2l-14.png">
+                <img class="alg-image" data-alg="(U' R U' R') (U' R U2 R')" src="algs/f2l-15.png">
+                <img class="alg-image" data-alg="(U' R U R') (d R' U' R)" src="algs/f2l-16.png">
+                <h4>Corner pointing outwards, edge in top layer</h4>
+                <img class="alg-image" data-alg="(R U' R' U) (d R' U' R)" src="algs/f2l-17.png">
+                <img class="alg-image" data-alg="(F' U F U') (d' F U F')" src="algs/f2l-18.png">
+                <img class="alg-image" data-alg="(U F' U2 F) (U F' U2 F)" src="algs/f2l-19.png">
+                <img class="alg-image" data-alg="(U' R U2 R') (U' R U2 R')" src="algs/f2l-20.png">
+                <img class="alg-image" data-alg="(U F' U' F) (U F' U2 F)" src="algs/f2l-21.png">
+                <img class="alg-image" data-alg="(U' R U R') (U' R U2 R')" src="algs/f2l-22.png">
+                <img class="alg-image" data-alg="(U' R U' R' U) (R U R')" src="algs/f2l-23.png">
+                <img class="alg-image" data-alg="(U F' U F U') (F' U' F)" src="algs/f2l-24.png">
+                <img class="alg-image" data-alg="(U' R U R' U) (R U R')" src="algs/f2l-25.png">
+                <img class="alg-image" data-alg="(U F' U' F U') (F' U' F)" src="algs/f2l-26.png">
+                <img class="alg-image" data-alg="(U F' U2 F U') (R U R')" src="algs/f2l-27.png">
+                <img class="alg-image" data-alg="(U' R U2 R' U) (F' U' F)" src="algs/f2l-28.png">
+                <h4>Corner pointing upwards, edge in top layer</h4>
+                <img class="alg-image" data-alg="(R U R' U') U' (R U R' U') (R U R')" src="algs/f2l-29.png">
+                <img class="alg-image" data-alg="y' (R' U' R U) U (R' U' R U) (R' U' R)" src="algs/f2l-30.png">
+                <img class="alg-image" data-alg="(U2 R U R') (U R U' R')" src="algs/f2l-31.png">
+                <img class="alg-image" data-alg="(U2 F' U' F) (U' F' U F)" src="algs/f2l-32.png">
+                <img class="alg-image" data-alg="(U R U2 R') (U R U' R')" src="algs/f2l-33.png">
+                <img class="alg-image" data-alg="(U' F' U2 F) (U' F' U F)" src="algs/f2l-34.png">
+                <img class="alg-image" data-alg="(R U2 R') (U' R U R')" src="algs/f2l-35.png">
+                <img class="alg-image" data-alg="(F' U2 F) (U F' U' F)" src="algs/f2l-36.png">
+                <h4>Corner in bottom, edge in middle</h4>
+                <img class="alg-image" data-alg="(R U' R' d R' U2 R) (U R' U2 R)" src="algs/f2l-37.png">
+                <img class="alg-image" data-alg="(R U' R' U R U2 R') (U R U' R')" src="algs/f2l-38.png">
+                <img class="alg-image" data-alg="(R U' R' U' R U R') (U' R U2 R')" src="algs/f2l-39.png">
+                <img class="alg-image" data-alg="(R U R' U' R U' R') (U d R' U' R)" src="algs/f2l-40.png">
+                <img class="alg-image" data-alg="(R U' R' d R' U' R) (U' R' U' R)" src="algs/f2l-41.png">
+
+        
+        </div>
+        
+        <div id="oll-algs">
+                <h2>OLL 2 Look</h2>
+                <h4>Edge Orientation</h4>
+                <img class="alg-image" data-alg="F (R U R' U') F'" src="algs/oll2l-edg-opp.png">
+                <img class="alg-image" data-alg="f (R U R' U') f'" src="algs/oll2l-edg-adj.png">
+                <img class="alg-image" data-alg="[F (R U R' U' ) F'][f (R U R' U' ) f']" src="algs/oll2l-edg-non.png">
+                <h4>Corner Orientation</h4>
+                <img class="alg-image" data-alg="(R U R' U) R U2 R'" src="algs/oll2l-cnr-sune.png">
+                <img class="alg-image" data-alg="R U2 R' U' R U' R'" src="algs/oll2l-cnr-anti-sune.png">
+                <img class="alg-image" data-alg="F (R U R' U')(R U R' U')(R U R' U') F'" src="algs/oll2l-cnr-car.png">
+                <img class="alg-image" data-alg="R U2' R2' U' R2 U' R2' U2 R" src="algs/oll2l-cnr-blinker.png">
+                <img class="alg-image" data-alg="R2 [D (R' U2) R][D' (R' U2) R']" src="algs/oll2l-cnr-headlights.png">
+                <img class="alg-image" data-alg="(r U R' U')(r' F R F') " src="algs/oll2l-cnr-chameleon.png">
+                <img class="alg-image" data-alg="F' (r U R' U')(r' F R )" src="algs/oll2l-cnr-bowtie.png">
+
+                <h2>OLL</h2>
+                <h4>All Edges Oriented Correctly</h4>
+                <img class="alg-image" data-alg="(R U R' U) R U2 R'" src="algs/oll-OCLL1.png">
+                <img class="alg-image" data-alg="R U2 R' U' R U' R'" src="algs/oll-OCLL2.png">
+                <img class="alg-image" data-alg="[f (R U R' U') f'] [F (R U R' U') F']" src="algs/oll-OCLL3.png">
+                <img class="alg-image" data-alg="F (R U R' U') (R U R' U') (R U R' U') F'" src="algs/oll-OCLL4.png">
+                <img class="alg-image" data-alg="(r U R' U') (r' F R F')" src="algs/oll-OCLL5.png">
+                <img class="alg-image" data-alg="F' (r U R' U') (r' F R )" src="algs/oll-OCLL6.png">
+                <img class="alg-image" data-alg="R2 [D (R' U2) R] [D' (R' U2) R']" src="algs/oll-OCLL7.png">
+                <h4>Corners Correct, Edges Flipped</h4>
+                <img class="alg-image" data-alg="(R U R' U') M' (U R U' r')" src="algs/oll-E1.png">
+                <img class="alg-image" data-alg="M' U M U2 M' U M" src="algs/oll-E2.png">
+                <h4>P-Shapes</h4>
+                <img class="alg-image" data-alg="f (R U R' U') f'" src="algs/oll-P1.png">
+                <img class="alg-image" data-alg="f' (L' U' L U) f" src="algs/oll-P2.png">
+                <img class="alg-image" data-alg="R U B' U' R' U R B R'" src="algs/oll-P3.png">
+                <img class="alg-image" data-alg="R' U' F U R U' R' F' R" src="algs/oll-P4.png">
+                <h4>W-Shapes</h4>
+                <img class="alg-image" data-alg="(R U R' U) (R U' R' U') (R' F R F')" src="algs/oll-W1.png">
+                <img class="alg-image" data-alg="(L' U' L U') (L' U L U) (L F' L' F)" src="algs/oll-W2.png">
+                <h4>Squares</h4>
+                <img class="alg-image" data-alg="r U2 R' U' R U' r'" src="algs/oll-S1.png">
+                <img class="alg-image" data-alg="r' U2 (R U R' U) r" src="algs/oll-S2.png">
+                <h4>L Shapes</h4>
+                <img class="alg-image" data-alg="F (R U R' U') (R U R' U') F'" src="algs/oll-L1.png">
+                <img class="alg-image" data-alg="F' (L' U' L U) (L' U' L U) F" src="algs/oll-L2.png">
+                <img class="alg-image" data-alg="l' U' L U' L' U L U' L' U2 l" src="algs/oll-L3.png">
+                <img class="alg-image" data-alg="(r U R' U) R U' R' U R U2' r'" src="algs/oll-L4.png">
+                <img class="alg-image" data-alg="(R' F R' F') R2 U2 y (R' F R F')" src="algs/oll-L5.png">
+                <img class="alg-image" data-alg="R' F R2 B' R2' F' R2 B R'" src="algs/oll-L6.png">
+                <h4>Fish Shapes</h4>
+                <img class="alg-image" data-alg="(R' U' R) y' x' (R U') (R' F) (R U R')" src="algs/oll-F1.png">
+                <img class="alg-image" data-alg="R U R' y R' F R U' R' F' R" src="algs/oll-F2.png">
+                <img class="alg-image" data-alg="(R U2 R') (R' F R F') (R U2 R')" src="algs/oll-F3.png">
+                <img class="alg-image" data-alg="F R U' R' U' R U R' F'" src="algs/oll-F4.png">
+                <h4>Awkward Shapes</h4>
+                <img class="alg-image" data-alg="R2 U R' B' R U' R2 U R B R'" src="algs/oll-A1.png">
+                <img class="alg-image" data-alg="(R U R' U') R U' R' F' U' F R U R'" src="algs/oll-A2.png">
+                <img class="alg-image" data-alg="[(R U R' U) R U2 R'] [F (R U R' U') F']" src="algs/oll-A3.png">
+                <img class="alg-image" data-alg="[R' U2 (R U R' U) R] y [F (R U R' U') F']" src="algs/oll-A4.png">
+                <h4>Lightning Bolts</h4>
+                <img class="alg-image" data-alg="(r U R' U) R U2 r'" src="algs/oll-LB1.png">
+                <img class="alg-image" data-alg="r' U' R U' R' U2 r" src="algs/oll-LB2.png">
+                <img class="alg-image" data-alg="[F' (L' U' L U) F] y [F (R U R' U') F']" src="algs/oll-LB3.png">
+                <img class="alg-image" data-alg="[F (R U R' U') F'] U [F (R U R' U') F' ]" src="algs/oll-LB4.png">
+                <img class="alg-image" data-alg="R B' R' U' R U B U' R'" src="algs/oll-LB5.png">
+                <img class="alg-image" data-alg="R' [F (R U R' U') F'] U R" src="algs/oll-LB6.png">
+                <h4>T-Shapes</h4>
+                <img class="alg-image" data-alg="F (R U R' U') F'" src="algs/oll-T1.png">
+                <img class="alg-image" data-alg="(R U R' U') (R' F R F')" src="algs/oll-T2.png">
+                <h4>C-Shapes</h4>
+                <img class="alg-image" data-alg="R' U' (R' F R F') U R" src="algs/oll-C1.png">
+                <img class="alg-image" data-alg="(R U R2' U') (R' F) (R U) (R U') F'" src="algs/oll-C2.png">
+                <h4>I Shapes</h4>
+                <img class="alg-image" data-alg="R' U2 R2 U R' U R U2 x' U' R' U" src="algs/oll-I1.png">
+                <img class="alg-image" data-alg="(R U R' U) R d' R U' R' F'" src="algs/oll-I2.png">
+                <img class="alg-image" data-alg="F (R U R' U') R F' (r U R' U') r'" src="algs/oll-I3.png">
+                <img class="alg-image" data-alg="f (R U R' U') (R U R' U') f'" src="algs/oll-I4.png">
+                <h4>Knight Move Shapes</h4>
+                <img class="alg-image" data-alg="(r U r') (R U R' U') (r U' r')" src="algs/oll-K1.png">
+                <img class="alg-image" data-alg="(l' U' l) (L' U' L U) (l' U l)" src="algs/oll-K2.png">
+                <img class="alg-image" data-alg="F U R U' R2 F' R (U R U' R')" src="algs/oll-K3.png">
+                <img class="alg-image" data-alg="R' F R U R' F' R y' R U' R'" src="algs/oll-K4.png">
+                <h4>No Edges Flipped Correctly</h4>
+                <img class="alg-image" data-alg="R U2 R' (R' F R F') U2 (R' F R F')" src="algs/oll-O1.png">
+                <img class="alg-image" data-alg="[F (R U R' U') F' ] [f (R U R' U') f']" src="algs/oll-O2.png">
+                <img class="alg-image" data-alg="[f (R U R' U') f'] U' [F (R U R' U') F' ]" src="algs/oll-O3.png">
+                <img class="alg-image" data-alg="[f (R U R' U') f'] U [F (R U R' U') F' ]" src="algs/oll-O4.png">
+                <img class="alg-image" data-alg="[F (R U R' U) F'] y' U2 (R' F R F')" src="algs/oll-O5.png">
+                <img class="alg-image" data-alg="M U (R U R' U') M' (R' F R F')" src="algs/oll-O6.png">
+                <img class="alg-image" data-alg="(R U R' U) (R' F R F') U2 (R' F R F')" src="algs/oll-O7.png">
+                <img class="alg-image" data-alg="M U (R U R' U') M2 (U R U' r')" src="algs/oll-O8.png">
+        
+        </div>
+        
+        <div id="pll-algs">
+                <h2>PLL</h2>
+                <h4>Permutations of Edges or Corners Only</h4>
+                <img class="alg-image" data-alg="R2 U (R U R' U')(R' U')(R' U R')" src="algs/pll-Ub.png">
+                <img class="alg-image" data-alg="(R U')(R U)(R U)(R U') R' U' R2" src="algs/pll-Ua.png">
+                <img class="alg-image" data-alg="M2 U M2 U M' U2 M2 U2 M' U2" src="algs/pll-Z.png">
+                <img class="alg-image" data-alg="M2 U M2 U2 M2 U M2" src="algs/pll-H.png">
+                <img class="alg-image" data-alg="x [(R' U R') D2][(R U' R') D2] R2" src="algs/pll-Aa.png">
+                <img class="alg-image" data-alg="x' [(R U' R) D2][(R' U R) D2] R2" src="algs/pll-Ab.png">
+                <img class="alg-image" data-alg="x'[(R U' R') D (R U R')] D' [(R U R') D (R U' R')] D'" src="algs/pll-E.png">
+                <h4>Swap One Set of Adjacent Corners</h4>
+                <img class="alg-image" data-alg="(L U2' L' U2')(L F')(L' U' L U)(L F) L2' U" src="algs/pll-Ra.png">
+                <img class="alg-image" data-alg="(R' U2 R U2)(R' F)(R U R' U')(R' F') R2 U'" src="algs/pll-Rb.png">
+                <img class="alg-image" data-alg="(R' U L')(U2 R U' R' U2)(R L U')" src="algs/pll-Ja.png">
+                <img class="alg-image" data-alg="(R U R' F')[(R U R' U')(R' F)(R2 U' R') U']" src="algs/pll-Jb.png">
+                <img class="alg-image" data-alg="(R U R' U')(R' F)(R2 U' R') U' (R U R' F')" src="algs/pll-T.png">
+                <img class="alg-image" data-alg="(R' U2 R' d')(R' F')(R2 U' R' U)(R' F R U' F)" src="algs/pll-F.png">
+                <h4>Swap One Set of Corners Diagonally</h4>
+                <img class="alg-image" data-alg="(R' U R' d')(R' F')(R2 U' R' U)(R' F R F)" src="algs/pll-V.png">
+                <img class="alg-image" data-alg="F R U' R' U' (R U R' F')[(R U R' U')(R' F R F')]" src="algs/pll-Y.png">
+                <img class="alg-image" data-alg="[(L U' R) U2 (L' U R')][(L U' R) U2 (L' U R')] U" src="algs/pll-Na.png">
+                <img class="alg-image" data-alg="[(R' U L') U2 (R U' L)][(R' U L') U2 (R U' L)] U'" src="algs/pll-Nb.png">
+                <h4>Double Spins</h4>
+                <img class="alg-image" data-alg="R2 u R' U R' U' R u' R2 (y' R' U R)" src="algs/pll-Ga.png">
+                <img class="alg-image" data-alg="R2 u' R U' R U R' u R2 (y R U' R')" src="algs/pll-Gc.png">
+                <img class="alg-image" data-alg="(R U R') y' R2 u' R U' R' U R' u R2" src="algs/pll-Gd.png">
+                <img class="alg-image" data-alg="(R' U' R) y R2 u R' U R U' R u' R2" src="algs/pll-Gb.png">
+       
+        </div>
+        
+    
+    </div>
+   
+    
+    <div id="text-input">
+        <input type="text" value="" id="algorithm" size=60><button id="read-in"><i class="fa fa-caret-square-o-right" aria-hidden="true"></i></button><button id="read-in-rev"><i class="fa fa-caret-square-o-left" aria-hidden="true"></i></button><button id="read-in-clear"><i class="fa fa-eraser" aria-hidden="true"></i></button>
+    </div>
+    <div id="controls">
+        <button id='reset'>Reset</button>
+        <button id='random-mix'>Random Mix</button>
+    </div>
+    <div id="world-record">
+        <button id='mats-mix'>Mats Valk Mix</button> <button id='mats-solution'>Mats Valk Solve</button>
+        <br>
+        <span class='thanks'>
+            Thanks to <a href="https://www.youtube.com/watch?v=VEsFoinLHrk" target="_blank">Matt Parker</a> for the ispiration and information.<br>
+            <a href="https://en.wikipedia.org/wiki/Mats_Valk" target="_blank">Mats Valk</a>, you are awesome - 4.74sec. I bought a VALK3.
+        </span>
+        
+        
+    </div>
+</div>
+</body>
+
+</html>
+
+<!---
+
+F2L
+==================================================
+
+1st: Easy cases
+R U R'
+F' U' F
+U' F' U F
+U R U' R'
+
+2nd case: Corner in bottom, edge in top layer
+(U R U' R') (U' F' U F)
+(U' F' U F) (U R' U' R)
+(F' U F) (U' F' U F)
+(R U R') (U' R U R')
+(R U' R') (U R U' R')
+(F' U' F) (U F' U' F)
+
+3rd case: Corner in top, edge in middle
+(R U R' U') (R U R' U') (R U R')
+(R U' R') (d R' U R)
+(U F' U F) (U F' U2 F)
+(U F' U' F) (d' F U F')
+(U' R U' R') (U' R U2 R')
+(U' R U R') (d R' U' R)
+
+4th case: Corner pointing outwards, edge in top layer
+(R U' R' U) (d R' U' R)
+(F' U F U') (d' F U F')
+(U F' U2 F) (U F' U2 F)
+(U' R U2 R') (U' R U2 R')
+(U F' U' F) (U F' U2 F)
+(U' R U R') (U' R U2 R')
+(U' R U' R' U) (R U R')
+(U F' U F U') (F' U' F)
+(U' R U R' U) (R U R')
+(U F' U' F U') (F' U' F)
+(U F' U2 F U') (R U R')
+(U' R U2 R' U) (F' U' F)
+
+5th case: Corner pointing upwards, edge in top layer
+(R U R' U') U' (R U R' U') (R U R')
+y' (R' U' R U) U (R' U' R U) (R' U' R)
+(U2 R U R') (U R U' R')
+(U2 F' U' F) (U' F' U F)
+(U R U2 R') (U R U' R')
+(U' F' U2 F) (U' F' U F)
+(R U2 R') (U' R U R')
+(F' U2 F) (U F' U' F)
+
+6th case: Corner in bottom, edge in middle
+(R U' R' d R' U2 R) (U R' U2 R)
+(R U' R' U R U2 R') (U R U' R')
+(R U' R' U' R U R') (U' R U2 R')
+(R U R' U' R U' R') (U d R' U' R)
+(R U' R' d R' U' R) (U' R' U' R)
+
+
+OLL
+==================================================
+
+Dot
+R U B' l U l2′ x' U' R' F R F'
+R' F R F' U2 R' F R y' R2 U2 R
+y L' R2 B R' B L U2′ L' B M'
+R' U2 x R' U R U' y R' U' R' U R' F
+(R U R' U) R' F R F' U2 R' F R F'
+M' U2 M U2 M' U M U2 M' U2 M
+R' U2 F (R U R' U') y' R2 U2 x' R U
+F (R U R' U) y' R' U2 (R' F R F')
+
+Line
+R' U' y L' U L' y' L F L' F R
+R U' y R2 D R' U2 R D' R2 d R'
+F U R U' R' U R U' R' F'
+L' B' L U' R' U R U' R' U R L' B L
+
+Cross
+L U' R' U L' U (R U R' U) R
+(R U R' U) R U' R' U R U2 R'
+L' U R U' L U R'
+R' U2 (R U R' U) R
+R' F' L F R F' L' F
+R2 D R' U2 R D' R' U2 R'
+R' F' L' F R F' L F
+
+4 corners
+M' U' M U2′ M' U' M
+L' (R U R' U') L R' F R F'
+
+Shape _|
+L F R' F R F2 L'
+F R' F' R U R U' R'
+R' U' R y' x' R U' R' F R U R'
+U' R U2′ R' U' R U' R2 y' R' U' R U B
+F (R U R' U') (R U R' U') F'
+L F' L' F U2 L2 y' L F L' F
+
+Shape |_
+U' R' U2 (R U R' U) R2 y (R U R' U') F'
+r U2 R' U' R U' r'
+R' U2 l R U' R' U l' U2 R
+F' L' U' L U L' U' L U F
+R' F R' F' R2 U2 x' U' R U R'
+R' F R F' U2 R2 y R' F' R F'
+
+Shape ¯|
+R U R' y R' F R U' R' F' R
+L' B' L U' R' U R L' B L
+U2 r R2′ U' R U' R' U2 R U' M
+x' U' R U' R2′ F x (R U R' U') R B2
+
+Shape |¯
+L U' y' R' U2′ R' U R U' R U2 R d' L'
+U2 l' L2 U L' U L U2 L' U M
+R2′ U R' B R U' R2′ U l U l'
+r' U2 (R U R' U) r
+
+C
+R U x' R U' R' U x U' R'
+(R U R' U') x D' R' U R E'
+
+L
+R' F R U R' F' R y L U' L'
+L F' L' U' L F L' y' R' U R
+L' B' L R' U' R U L' B L
+R B R' L U L' U' R B' R'
+
+P
+F U R U' R' F'
+R' d' L d R U' R' F' R
+L d R' d' L' U L F L'
+F' U' L' U L F
+
+T
+F (R U R' U') F'
+(R U R' U') R' F R F'
+
+W
+L U L' U L U' L' U' y2′ R' F R F'
+R' U' R U' R' U R U y F R' F' R
+
+Z
+R' F (R U R' U') y L' d R
+L F' L' U' L U y' R d' L'
+
+PLL
+===========================================================
+
+A1:
+x [(R' U R') D2] [(R U' R') D2] R2
+
+A2:
+x' [(R U' R) D2] [(R' U R) D2] R2
+
+U1:
+R2 U [R U R' U'] (R' U') (R' U R')
+
+U2:
+[R U'] [R U] [R U] [R U'] R' U' R2
+
+H:
+M2 U M2 U2 M2 U M2 
+
+T:
+[R U R' U'] [R' F] [R2 U' R'] U' [R U R' F']
+
+J1:
+[R' U L'] [U2 R U' R' U2] [R L U']
+
+J2:
+[R U R' F'] {[R U R' U'] [R' F] [R2 U' R'] U'}
+
+R1:
+[L U2′ L' U2′] [L F'] [L' U' L U] [L F] L2′ U
+
+R2:
+[R' U2 R U2] [R' F] [R U R' U'] [R' F'] R2 U'
+
+V:
+[R' U R' d'] [R' F'] [R2 U' R' U] [R' F R F]
+
+G1:
+R2 u R' U R' U' R u' R2 [y' R' U R]
+
+G2:
+[R' U' R] y R2 u R' U R U' R u' R2
+
+G3:
+R2 u' R U' R U R' u R2 [y R U' R']
+
+G4:
+[R U R'] y' R2 u' R U' R' U R' u R2
+
+F:
+[R' U2 R' d'] [R' F'] [R2 U' R' U] [R' F R U' F]
+
+Z:
+M2 U M2 U M' U2 M2 U2 M' U2 
+
+Y:
+F R U' R' U' [R U R' F'] {[R U R' U'] [R' F R F']}
+
+N1:
+{(L U' R) U2 (L' U R')} {(L U' R) U2 (L' U R')} U
+
+N2:
+{(R' U L') U2 (R U' L)} {(R' U L') U2 (R U' L)} U'
+
+E:
+X (R U' R') D (R U R') u2 (R' U R) D (R' U' R)
+
+
+--->
+
+

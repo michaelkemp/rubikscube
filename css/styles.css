@@ -1,0 +1,128 @@
+body {
+    margin: 0px;
+}
+#container {
+    max-width:700px;
+    margin: 10px auto;
+}
+#cube-canvas {
+    background-color: #fff;
+    border: 1px solid black;
+    display: inline-block;
+}
+    
+    
+table, th, td {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+    
+h2 {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 12px;
+    line-height: 24px;
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
+}
+#camera-input {
+    position: absolute;
+    top: 10px;
+    right: 50%;
+    margin-right: -240px;    
+}
+
+#button-input, #display-elements, #text-input, #controls, #world-record, #algorithm-input {
+    text-align: center;
+    width:700px;
+    position: relative;
+    margin: 10px;
+}
+.keypad-div {
+    display: inline-block;
+    padding:10px 10px;
+}
+.square {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 15px;
+    width: 30px;
+    height:30px;
+}
+.port {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 15px;
+    width:30px;
+    height: 60px;
+}
+.land {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 15px;
+    width: 60px;
+    height: 30px;
+}
+.text-top    { padding: 0px 0px 30px 0px; }
+.text-right  { padding: 0px 0px 0px 30px; }
+.text-bottom { padding: 30px 0px 0px 0px; }
+.text-left   { padding: 0px 30px 0px 0px; }
+
+.thanks {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 5px;
+    display: block;
+}
+
+
+#f2l-algs h2, #oll-algs h2, #pll-algs h2 {
+    width:175px;
+    height:175px;
+    font-size: 20px;
+    font-weight: bold;
+    padding:10px 0px 10px 0px;
+    margin:0;
+}
+
+#f2l-algs h4, #oll-algs h4, #pll-algs h4 {
+    width:175px;
+    height:175px;
+    font-size: 16px;
+    font-weight: bold;
+    padding:10px 0px 10px 0px;
+    margin:0;
+}
+
+#f2l-algs img, #oll-algs img, #pll-algs img {
+    width:175px;
+    height:175px;
+    margin:0;
+    cursor: pointer;
+}
+
+#f2l-algs img {
+    padding: 0px 0px 10px 0px;
+}
+
+#oll-algs img {
+    padding: 5px 0px 10px 0px;
+}
+
+#pll-algs img {
+    padding: 10px 0px 10px 0px;
+}
+
+#f2l-algs, #oll-algs, #pll-algs {
+    display: inline-block;
+    border: 1px solid black;
+    width:180px;
+    height:175px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    text-align: center;
+    margin: 10px;
+    padding: 5px 15px 0px 5px;
+    
+}
